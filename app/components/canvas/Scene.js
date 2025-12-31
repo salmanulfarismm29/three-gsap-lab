@@ -2,17 +2,20 @@
 
 import CameraController from "./CameraController";
 import Objects from "./Objects";
-import ParallaxBackground from "../effects/ParallaxBackground";
-import BackgroundParticles from "../effects/BackgroundParticles";
 import Lighting from "../effects/Lighting";
+import BackgroundParticles from "../effects/BackgroundParticles";
+import HeroShaderPlane from "../shaders/HeroShaderPlane";
 
 export default function Scene() {
   return (
     <>
       <CameraController />
       <Lighting />
-      <ParallaxBackground layers={3} />
-      <BackgroundParticles count={120} />
+
+      {/* Shader hero background */}
+      <HeroShaderPlane color="#4f46e5" />
+
+      <BackgroundParticles count={80} />
       <Objects />
     </>
   );
