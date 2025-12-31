@@ -5,21 +5,42 @@ import { useThree } from "@react-three/fiber";
 
 export default function Scene({ timeline }) {
   const cubeRef = useRef(null);
+  const sphereRef = useRef(null);
+  const torusRef = useRef(null);
   const { camera } = useThree();
 
   useLayoutEffect(() => {
-    if (!timeline || !camera || !cubeRef.current) return;
+    if (!timeline || !camera) return;
 
+    // Camera path
     timeline
-      .to(camera.position, { z: 2.5, x: 1, ease: "none" })
-      .to(camera.rotation, { y: -0.3, x: -0.1, ease: "none" }, 0)
-      .to(cubeRef.current.rotation, { y: Math.PI * 0.5, ease: "none" }, 0);
+      .to(camera.position, { z: 3, x: 1, y: 0.5, ease: "none" })
+      .to(camera.rotation, { y: -0.2, x: -0.1, ease: "none" }, 0)
+      .to(camera, { fov: 65, onUpdate: () => camera.updateProjectionMatrix() }, 0);
+
+    // Staggered object animations
+    timeline
+      .to(cubeRef.current.rotation, { y: Math.PI, ease: "power1.inOut" }, 0)
+      .to(sphereRef.current.rotation, { x: Math.PI, ease: "power1.inOut" }, 0.2)
+      .to(torusRef.current.rotation, { y: -Math.PI, ease: "power1.inOut" }, 0.4);
   }, [timeline, camera]);
 
   return (
-    <mesh ref={cubeRef}>
-      <boxGeometry args={[1.5, 1.5, 1.5]} />
-      <meshStandardMaterial color="#4f46e5" />
-    </mesh>
+    <>
+      <mesh ref={cubeRef} position={[-2, 0, 0]}>
+        <boxGeometry args={[1.2, 1.2, 1.2]} />
+        <meshStandardMaterial color="#4f46e5" />
+      </mesh>
+
+      <mesh ref={sphereRef} position={[0, 0, 0]}>
+        <sphereGeometry args={[0.8, 32, 32]} />
+        <meshStandardMaterial color="#f59e0b" />
+      </mesh>
+
+      <mesh ref={torusRef} position={[2, 0, 0]}>
+        <torusGeometry args={[0.7, 0.3, 16, 100]} />
+        <meshStandardMaterial color="#10b981" />
+      </mesh>
+    </>
   );
 }
