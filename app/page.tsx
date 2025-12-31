@@ -2,75 +2,58 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
-  const containerRef = useRef(null);
-  const titleRef = useRef(null);
-  const textRef = useRef(null);
-  const buttonRef = useRef(null);
+  const sectionRef = useRef(null);
 
   useEffect(() => {
-    const tl = gsap.timeline();
-
-    tl.from(titleRef.current, {
+    gsap.from(sectionRef.current, {
       y: 80,
       opacity: 0,
       duration: 1,
-      ease: "power4.out",
-    })
-      .from(
-        textRef.current,
-        {
-          y: 40,
-          opacity: 0,
-          duration: 0.8,
-          ease: "power3.out",
-        },
-        "-=0.2" // overlaps previous animation
-      )
-      .from(
-        buttonRef.current,
-        {
-          y: 20,
-          opacity: 0,
-          scale: 0.8,
-          duration: 0.6,
-          ease: "power2.out",
-        },
-        "-=0.4"
-      );
+      scale: 0.9,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 80%",
+        toggleActions: "play none none none",
+        markers: true
+      },
+    });
   }, []);
 
   return (
-    <main
-      ref={containerRef}
-      style={{
-        height: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <div style={{ textAlign: "center" }}>
-        <h1 ref={titleRef} style={{ fontSize: "3rem", marginBottom: "1rem" }}>
-          Build Stunning Websites
-        </h1>
+    <main>
+      {/* Spacer */}
+      <section
+        style={{
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <h1>Scroll Down 👇</h1>
+      </section>
 
-        <p ref={textRef} style={{ fontSize: "1.2rem", marginBottom: "2rem" }}>
-          Animations that attract and impress clients
-        </p>
-
-        <button
-          ref={buttonRef}
-          style={{
-            padding: "12px 24px",
-            fontSize: "1rem",
-            cursor: "pointer",
-          }}
-        >
-          Get Started
-        </button>
-      </div>
+      {/* Animated Section */}
+      <section
+        ref={sectionRef}
+        style={{
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#f5f5f5",
+        }}
+      >
+        <h2 style={{ fontSize: "2.5rem" }}>
+          This Animates on Scroll
+        </h2>
+      </section>
     </main>
   );
 }
