@@ -9,7 +9,7 @@ import TextOverlay from "./TextOverlay";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function PinnedSection({ texts }) {
+export default function PinnedSection({ texts, objectsConfig }) {
   const sectionRef = useRef(null);
   const timelineRef = useRef(null);
   const textRefs = useRef([]);
@@ -24,7 +24,6 @@ export default function PinnedSection({ texts }) {
           scrub: true,
           pin: true,
           anticipatePin: 1,
-          // markers: true
         },
       });
 
@@ -34,9 +33,14 @@ export default function PinnedSection({ texts }) {
         const text = textRefs.current[i];
         tl.fromTo(
           text,
-          { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, duration: 0.3 }
-        ).to(text, { opacity: 0, y: -40, duration: 0.3 });
+          { opacity: 0, y: 50 },
+          { opacity: 1, y: 0, duration: 0.4 },
+          i * 0.3
+        ).to(
+          text,
+          { opacity: 0, y: -50, duration: 0.3 },
+          i * 0.3 + 0.6
+        );
       });
     }, sectionRef);
 
@@ -47,7 +51,7 @@ export default function PinnedSection({ texts }) {
 
   return (
     <section ref={sectionRef} style={{ height: "100vh", position: "relative" }}>
-      {/* TEXT OVERLAY */}
+      {/* Text Overlay */}
       <div
         style={{
           position: "absolute",
@@ -68,9 +72,9 @@ export default function PinnedSection({ texts }) {
         ))}
       </div>
 
-      {/* 3D CANVAS */}
+      {/* 3D Canvas */}
       <CanvasWrapper>
-        <Scene timeline={timelineRef.current} />
+        <Scene timeline={timelineRef.current} objectsConfig={objectsConfig} />
       </CanvasWrapper>
     </section>
   );
