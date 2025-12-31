@@ -1,47 +1,88 @@
 "use client";
 
 import { useRef, useLayoutEffect } from "react";
-import { useThree } from "@react-three/fiber";
+import { useThree, useFrame } from "@react-three/fiber";
+import BackgroundEffects from "./BackgroundEffects";
+import ParallaxBackground from "./ParallaxBackground";
 
 export default function Scene({ timeline, objectsConfig }) {
   const cubeRef = useRef(null);
   const sphereRef = useRef(null);
   const torusRef = useRef(null);
-  const { camera } = useThree();
+  const groupRef = useRef(null);
+  const flickerLight = useRef(null);
 
+  const { camera, mouse } = useThree();
+
+  // GSAP scroll-driven cinematic animation
   useLayoutEffect(() => {
     if (!timeline || !camera) return;
 
-    // Cinematic camera
     timeline
+      // camera
       .to(camera.position, { z: 4, x: 0, y: 0, ease: "none" }, 0)
       .to(camera.position, { z: 2, x: 1, y: 0.5, ease: "none" }, 0.3)
       .to(camera.rotation, { y: -0.3, x: -0.1, ease: "none" }, 0)
-      .to(camera, { fov: 65, onUpdate: () => camera.updateProjectionMatrix(), ease: "none" }, 0);
+      .to(camera, {
+        fov: 65,
+        onUpdate: () => camera.updateProjectionMatrix(),
+        ease: "none",
+      }, 0)
 
-    // Staggered objects
-    timeline
-      .to(cubeRef.current.rotation, { y: Math.PI, ease: "power1.inOut" }, 0)
-      .to(sphereRef.current.rotation, { x: Math.PI, ease: "power1.inOut" }, 0.2)
-      .to(torusRef.current.rotation, { y: -Math.PI, ease: "power1.inOut" }, 0.4);
+      // objects
+      .to(cubeRef.current.rotation, { y: Math.PI }, 0)
+      .to(sphereRef.current.rotation, { x: Math.PI }, 0.2)
+      .to(torusRef.current.rotation, { y: -Math.PI }, 0.4);
   }, [timeline, camera]);
+
+  // Ambient motion + lighting life
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime;
+
+    // floating objects (this is HUGE for realism)
+    if (groupRef.current) {
+      groupRef.current.position.y = Math.sin(t * 0.8) * 0.15;
+      groupRef.current.rotation.x = mouse.y * 0.12;
+      groupRef.current.rotation.y = mouse.x * 0.12;
+    }
+
+    // cinematic light breathing
+    if (flickerLight.current) {
+      flickerLight.current.intensity = 0.6 + Math.sin(t * 3) * 0.15;
+      flickerLight.current.color.setHSL(
+        0.6 + Math.sin(t * 0.2) * 0.05,
+        0.6,
+        0.6
+      );
+    }
+
+    // micro camera breathing (VERY subtle)
+    camera.position.y += Math.sin(t * 0.4) * 0.0005;
+  });
 
   return (
     <>
-      <mesh ref={cubeRef} position={objectsConfig?.cubePosition || [-2, 0, 0]}>
-        <boxGeometry args={[1.2, 1.2, 1.2]} />
-        <meshStandardMaterial color={objectsConfig?.cubeColor || "#4f46e5"} />
-      </mesh>
+      <ParallaxBackground layers={3} />
+      <BackgroundEffects count={300} />
 
-      <mesh ref={sphereRef} position={objectsConfig?.spherePosition || [0, 0, 0]}>
-        <sphereGeometry args={[0.8, 32, 32]} />
-        <meshStandardMaterial color={objectsConfig?.sphereColor || "#f59e0b"} />
-      </mesh>
+      <pointLight ref={flickerLight} position={[5, 5, 5]} />
 
-      <mesh ref={torusRef} position={objectsConfig?.torusPosition || [2, 0, 0]}>
-        <torusGeometry args={[0.7, 0.3, 16, 100]} />
-        <meshStandardMaterial color={objectsConfig?.torusColor || "#10b981"} />
-      </mesh>
+      <group ref={groupRef}>
+        <mesh ref={cubeRef} position={[-2, 0, 0]}>
+          <boxGeometry args={[1.2, 1.2, 1.2]} />
+          <meshStandardMaterial color={objectsConfig?.cubeColor} />
+        </mesh>
+
+        <mesh ref={sphereRef} position={[0, 0, 0]}>
+          <sphereGeometry args={[0.8, 32, 32]} />
+          <meshStandardMaterial color={objectsConfig?.sphereColor} />
+        </mesh>
+
+        <mesh ref={torusRef} position={[2, 0, 0]}>
+          <torusGeometry args={[0.7, 0.3, 16, 100]} />
+          <meshStandardMaterial color={objectsConfig?.torusColor} />
+        </mesh>
+      </group>
     </>
   );
 }

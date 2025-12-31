@@ -45,13 +45,11 @@ export default function PinnedSection({ texts, objectsConfig }) {
     }, sectionRef);
 
     ScrollTrigger.refresh();
-
     return () => ctx.revert();
   }, [texts]);
 
   return (
     <section ref={sectionRef} style={{ height: "100vh", position: "relative" }}>
-      {/* Text Overlay */}
       <div
         style={{
           position: "absolute",
@@ -71,8 +69,6 @@ export default function PinnedSection({ texts, objectsConfig }) {
           />
         ))}
       </div>
-
-      {/* 3D Canvas */}
       <CanvasWrapper>
         <Scene timeline={timelineRef.current} objectsConfig={objectsConfig} />
       </CanvasWrapper>
