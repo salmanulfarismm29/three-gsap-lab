@@ -15,8 +15,10 @@ export default function Home() {
         <h1>Scroll Down 👇</h1>
       </section>
 
-      {/* Pinned 3D Story */}
+      {/* Multi-section storytelling */}
       <PinnedSection texts={["Designed for Performance", "Built for Experience"]} />
+      <PinnedSection texts={["Premium Interaction", "Smooth Animations"]} />
+      <PinnedSection texts={["Engage Your Users", "Create Impact"]} />
 
       {/* Outro */}
       <section

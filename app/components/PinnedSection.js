@@ -24,6 +24,7 @@ export default function PinnedSection({ texts }) {
           scrub: true,
           pin: true,
           anticipatePin: 1,
+          // markers: true
         },
       });
 
@@ -31,8 +32,11 @@ export default function PinnedSection({ texts }) {
 
       texts.forEach((_, i) => {
         const text = textRefs.current[i];
-        tl.fromTo(text, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.3 })
-          .to(text, { opacity: 0, y: -40, duration: 0.3 });
+        tl.fromTo(
+          text,
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, duration: 0.3 }
+        ).to(text, { opacity: 0, y: -40, duration: 0.3 });
       });
     }, sectionRef);
 
@@ -43,6 +47,7 @@ export default function PinnedSection({ texts }) {
 
   return (
     <section ref={sectionRef} style={{ height: "100vh", position: "relative" }}>
+      {/* TEXT OVERLAY */}
       <div
         style={{
           position: "absolute",
@@ -63,6 +68,7 @@ export default function PinnedSection({ texts }) {
         ))}
       </div>
 
+      {/* 3D CANVAS */}
       <CanvasWrapper>
         <Scene timeline={timelineRef.current} />
       </CanvasWrapper>
