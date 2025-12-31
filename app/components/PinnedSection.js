@@ -3,9 +3,9 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import CanvasWrapper from "./CanvasWrapper";
-import Scene from "./Scene";
-import TextOverlay from "./TextOverlay";
+import CanvasWrapper from "./canvas/CanvasWrapper";
+import Scene from "./canvas/Scene";
+import TextOverlay from "./scroll/TextOverlay";
 
 gsap.registerPlugin(ScrollTrigger);
 
